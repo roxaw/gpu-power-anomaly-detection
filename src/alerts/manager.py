@@ -1,8 +1,60 @@
 """
 Alert manager for anomaly detection.
 
-This module will create and manage alert objects whenever a detector flags an
-anomaly. Each alert will include timestamp, detector name, severity, reason,
-raw value, and features.
+This module defines a utility function to generate alert objects whenever a
+detector flags an anomaly. Each alert includes contextual information that
+can later be displayed in a dashboard or logged to disk.
+
+Fields captured in each alert:
+- timestamp: datetime of the data point.
+- detector: name of the detector that fired (e.g., "threshold", "isolation_forest").
+- severity: numeric score indicating anomaly strength (e.g., absolute z-score, inverted decision_function).
+- reason: a brief string explaining why the detector flagged the point.
+- raw_value: the raw power reading at the anomaly.
+- features: a dictionary of all feature values for that row.
 """
-# TODO: Implement the alert manager in Step 10.
+
+from typing import Any, Dict, List
+
+import pandas as pd
+
+
+def generate_alerts(
+    df: pd.DataFrame,
+    anomaly_col: str,
+    score_col: str,
+    detector_name: str,
+) -> List[Dict[str, Any]]:
+    """
+    Generate alerts from a DataFrame of detection results.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing the detection results and feature columns.
+    anomaly_col : str
+        Name of the boolean column indicating whether each row is an anomaly.
+    score_col : str
+        Name of the numeric column providing the anomaly score or severity.
+    detector_name : str
+        Identifier for the detector.
+
+    Returns
+    -------
+    list of dict
+        A list of alert dictionaries, one per anomaly row.
+    """
+    alerts = []
+
+    for _, row in df[df[anomaly_col]].iterrows():
+        alert = {
+            "timestamp": row["timestamp"],
+            "detector": detector_name,
+            "severity": row[score_col],
+            "reason": f"{detector_name} score {row[score_col]:.2f}",
+            "raw_value": row["power"],
+            "features": row.to_dict(),
+        }
+        alerts.append(alert)
+
+    return alerts
