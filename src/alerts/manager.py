@@ -7,16 +7,21 @@ can later be displayed in a dashboard or logged to disk.
 
 Fields captured in each alert:
 - timestamp: datetime of the data point.
-- detector: name of the detector that fired (e.g., "threshold", "isolation_forest").
-- severity: numeric score indicating anomaly strength (e.g., absolute z-score, inverted decision_function).
-- reason: a brief string explaining why the detector flagged the point.
-- raw_value: the raw power reading at the anomaly.
-- features: a dictionary of all feature values for that row.
+- detector: name of the detector that fired.
+- severity: numeric score indicating anomaly strength.
+- reason: human-readable explanation for the anomaly.
+- raw_value: raw power reading at the anomaly.
+- features: dictionary of all feature values for that row.
 """
 
 from typing import Any, Dict, List
 
 import pandas as pd
+
+from src.explanations.explanation import (
+    explain_isolation_forest,
+    explain_threshold,
+)
 
 
 def generate_alerts(
@@ -47,11 +52,18 @@ def generate_alerts(
     alerts = []
 
     for _, row in df[df[anomaly_col]].iterrows():
+        if detector_name == "threshold":
+            reason = explain_threshold(row)
+        elif detector_name == "isolation_forest":
+            reason = explain_isolation_forest(row)
+        else:
+            reason = f"{detector_name} score {row[score_col]:.2f}"
+
         alert = {
             "timestamp": row["timestamp"],
             "detector": detector_name,
             "severity": row[score_col],
-            "reason": f"{detector_name} score {row[score_col]:.2f}",
+            "reason": reason,
             "raw_value": row["power"],
             "features": row.to_dict(),
         }

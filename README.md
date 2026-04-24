@@ -36,3 +36,13 @@ Using a Python virtual environment to keep dependencies isolated from your syste
 1. **Create a virtual environment** (requires Python 3.8+):
    ```bash
    python3 -m venv .venv
+
+
+## Usage
+
+### Run the Streamlit dashboard
+
+Activate the virtual environment first:
+
+```powershell
+.venv\Scripts\activate
