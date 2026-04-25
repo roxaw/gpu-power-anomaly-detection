@@ -22,6 +22,8 @@ dist/
 data/*.csv
 data/*.json
 logs/
+data/**/*.csv
+data/**/*.json
 
 # OS files
 Thumbs.db
