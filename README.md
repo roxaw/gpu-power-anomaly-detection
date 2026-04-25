@@ -59,3 +59,8 @@ Command used:
 
 ```powershell
 python -m src.evaluation.nab_evaluation data\nab\cpu_utilization_asg_misconfiguration_labeled.csv --label-col label --z-thresh 2.5 --window 10 --contamination 0.05
+
+| Detector           | Precision | Recall |     F1 |
+| ------------------ | --------: | -----: | -----: |
+| Threshold detector |    0.0376 | 0.0667 | 0.0481 |
+| Isolation Forest   |    0.3223 | 0.1941 | 0.2423 |
