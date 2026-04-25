@@ -46,3 +46,16 @@ Activate the virtual environment first:
 
 ```powershell
 .venv\Scripts\activate
+
+## NAB Evaluation Result
+
+For Phase 2 evaluation, the project was tested on the NAB file:
+
+`realKnownCause/cpu_utilization_asg_misconfiguration.csv`
+
+This file is infrastructure telemetry representing AWS CPU utilization across a cluster. Since NAB stores anomaly labels separately as anomaly windows, the anomaly window labels were converted into a point-wise binary `label` column for simple precision, recall, and F1 evaluation.
+
+Command used:
+
+```powershell
+python -m src.evaluation.nab_evaluation data\nab\cpu_utilization_asg_misconfiguration_labeled.csv --label-col label --z-thresh 2.5 --window 10 --contamination 0.05
